@@ -1,3 +1,4 @@
+
 package edu.course.gradebook;
 
 import java.util.*;
@@ -16,63 +17,61 @@ public class Gradebook {
 
     public boolean addStudent(String name) {
         if (gradesByStudent.containsKey(name)) {
-            System.out.println("We already have this student in our existing records");
+            activityLog.add("We already have this student in our existing records");
             return false;
         }
         gradesByStudent.put(name, new ArrayList<>());
-        System.out.println("Student " + name + " has been added");
+        activityLog.add("Student " + name + " has been added");
         ArrayList<Integer> students = new ArrayList<>();
-        for (int index = 0; index < gradesByStudent.get(name).size(); index++) {
-            students.add(index);
-        }
         return true;
     }
 
     public boolean addGrade(String name, int grade) {
         if (!gradesByStudent.containsKey(name)) {
-            System.out.println("Student not found in our existing records");
+            activityLog.add("Student not found in our existing records");
             return false;
         }
 
         ArrayList<Integer> studentgrades = new ArrayList<>(gradesByStudent.get(name));
         studentgrades.add(grade);
         gradesByStudent.put(name, studentgrades);
-        System.out.println("Student " + name + " has added the grade " + grade);
-        undoStack.push(() -> gradesByStudent.get(name).remove((Integer) grade));
+        activityLog.add("Student " + name + " has added the grade " + grade);
+        List<Integer> oldGrades = new ArrayList<>(gradesByStudent.get(name));
+        undoStack.push(() -> gradesByStudent.put(name, oldGrades));
         return true;
     }
 
     public boolean removeStudent(String name) {
         if (!gradesByStudent.containsKey(name)) {
-            System.out.println("Student not found in our existing records");
+            activityLog.add("Student not found in our existing records");
             return false;
         }
         List<Integer> oldGrades = new ArrayList<>(gradesByStudent.get(name));
         undoStack.push(() -> gradesByStudent.put(name, oldGrades));
         gradesByStudent.remove(name);
-        System.out.println("Student " + name + " has been removed from our existing records");
+        activityLog.add("Student " + name + " has been removed from our existing records");
         return true;
     }
 
     public Optional<Double> averageFor(String name) {
         List<Integer> studentGrades = new ArrayList<>(gradesByStudent.get(name));
 
-        if (studentGrades.isEmpty()) {
-            System.out.println("Student has no grades in our existing records");
+        if (studentGrades == null ||studentGrades.isEmpty()) {
+            activityLog.add("Student has no grades in our existing records");
             return Optional.empty();
         }
         int total = 0;
         for (int index : studentGrades) {
             total += index;
         }
-        double average = (double) (total / studentGrades.size());
+        double average = (double) total / studentGrades.size();
         return Optional.of(average);
     }
 
     public Optional<String> letterGradeFor(String name) {
         Optional<Double> average = averageFor(name);
         if (average.isEmpty()) {
-            System.out.println("Student has no grades in our existing records");
+            activityLog.add("Student has no grades in our existing records");
             return Optional.empty();
         }
         double gotAverage = average.get();
@@ -83,7 +82,7 @@ public class Gradebook {
             case 8 -> "B";
             case 7 -> "C";
             case 6 -> "D";
-            default-> "F";
+            default -> "F";
         };
         return Optional.of(letterGrade);
     }
@@ -92,18 +91,18 @@ public class Gradebook {
         double classAverage = 0;
         int ctr = 0;
 
-        for(String student : gradesByStudent.keySet()) {
+        for (String student : gradesByStudent.keySet()) {
             for (int grade : gradesByStudent.get(student)) {
                 classAverage += grade;
                 ctr++;
             }
         }
 
-        if(ctr ==0) {
+        if (ctr == 0) {
             return Optional.empty();
         }
 
-          double average = classAverage / ctr;
+        double average = classAverage / ctr;
         return Optional.of(average);
     }
 
@@ -111,16 +110,18 @@ public class Gradebook {
         if (undoStack.isEmpty())
             return false;
         undoStack.pop().undo();
-        System.out.println("Undo has been successfully undone");
+        activityLog.add("Undo has been successfully undone");
         return true;
     }
 
     public List<String> recentLog(int maxItems) {
         maxItems = Math.min(maxItems, activityLog.size());
-        return activityLog.subList(activityLog.size()-maxItems, activityLog.size());
+        return activityLog.subList(activityLog.size() - maxItems, activityLog.size());
     }
 
-    /**added this interface because I was unclear on the lambdas, I had to do some extra reading on my own and according to what I read this was the fix needed*/
+    /**
+     * added this interface because I was unclear on the lambdas, I had to do some extra reading on my own and according to what I read this was the fix needed
+     */
     public interface UndoAction {
         void undo();
     }
