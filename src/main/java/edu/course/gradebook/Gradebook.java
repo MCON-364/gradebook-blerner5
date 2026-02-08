@@ -31,13 +31,13 @@ public class Gradebook {
             activityLog.add("Student not found in our existing records");
             return false;
         }
+        List<Integer> oldGrades = new ArrayList<>(gradesByStudent.get(name));
+        undoStack.push(() -> gradesByStudent.put(name, oldGrades));
 
         ArrayList<Integer> studentgrades = new ArrayList<>(gradesByStudent.get(name));
         studentgrades.add(grade);
         gradesByStudent.put(name, studentgrades);
         activityLog.add("Student " + name + " has added the grade " + grade);
-        List<Integer> oldGrades = new ArrayList<>(gradesByStudent.get(name));
-        undoStack.push(() -> gradesByStudent.put(name, oldGrades));
         return true;
     }
 
@@ -54,9 +54,9 @@ public class Gradebook {
     }
 
     public Optional<Double> averageFor(String name) {
-        List<Integer> studentGrades = new ArrayList<>(gradesByStudent.get(name));
+        List<Integer> studentGrades = gradesByStudent.get(name);
 
-        if (studentGrades == null ||studentGrades.isEmpty()) {
+        if (studentGrades == null || studentGrades.isEmpty()) {
             activityLog.add("Student has no grades in our existing records");
             return Optional.empty();
         }
