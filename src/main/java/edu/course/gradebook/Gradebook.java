@@ -34,7 +34,7 @@ public class Gradebook {
         List<Integer> oldGrades = new ArrayList<>(gradesByStudent.get(name));
         undoStack.push(() -> {
             gradesByStudent.put(name, new ArrayList<>(oldGrades));
-            activityLog.add("Undo - removed grade from student " + name);
+            activityLog.add("Undo: removed grade from student " + name);
         });
 
         List<Integer> newGrades = new ArrayList<>(oldGrades);
