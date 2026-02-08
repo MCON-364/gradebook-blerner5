@@ -32,11 +32,11 @@ public class Gradebook {
             return false;
         }
         List<Integer> oldGrades = new ArrayList<>(gradesByStudent.get(name));
-        undoStack.push(() -> gradesByStudent.put(name, oldGrades));
+        undoStack.push(() -> gradesByStudent.put(name, new ArrayList<>(oldGrades)));
 
-        ArrayList<Integer> studentgrades = new ArrayList<>(gradesByStudent.get(name));
-        studentgrades.add(grade);
-        gradesByStudent.put(name, studentgrades);
+        List<Integer> newGrades = new ArrayList<>(oldGrades);
+        newGrades.add(grade);
+        gradesByStudent.put(name, newGrades);
         activityLog.add("Student " + name + " has added the grade " + grade);
         return true;
     }
