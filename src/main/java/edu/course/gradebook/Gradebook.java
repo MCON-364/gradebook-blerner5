@@ -47,8 +47,8 @@ public class Gradebook {
             return false;
         }
         List<Integer> oldGrades = new ArrayList<>(gradesByStudent.get(name));
-        undoStack.push(() -> {gradesByStudent.put(name, oldGrades);
-        activityLog.add("Student " + name + " has removed from our existing records");});
+        undoStack.push(() -> {gradesByStudent.put(name, new ArrayList<>(oldGrades));
+        activityLog.add("Undo: restored student " + name);});
         gradesByStudent.remove(name);
         activityLog.add("Student " + name + " has been removed from our existing records");
         return true;
@@ -111,7 +111,6 @@ public class Gradebook {
         if (undoStack.isEmpty())
             return false;
         undoStack.pop().undo();
-        activityLog.add("Undo, successfully reverted last action!");
         return true;
     }
 
