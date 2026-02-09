@@ -31,14 +31,12 @@ public class Gradebook {
             activityLog.add("Student not found in our existing records");
             return false;
         }
-        List<Integer> oldGrades = new ArrayList<>(gradesByStudent.get(name));
+        List<Integer> studentGrades = gradesByStudent.get(name);
         undoStack.push(() -> {
-            gradesByStudent.get(name).remove(Integer.valueOf(grade));
+            studentGrades.remove(Integer.valueOf(grade));
             activityLog.add("Undo: removed grade " + grade + " for " + name);
         });
-        List<Integer> studentgrades = new ArrayList<>(oldGrades);
-        studentgrades.add(grade);
-        gradesByStudent.put(name, studentgrades);
+        studentGrades.add(grade);
         activityLog.add("Student " + name + " has added the grade " + grade);
         return true;
     }
