@@ -21,8 +21,11 @@ public class Gradebook {
             return false;
         }
         gradesByStudent.put(name, new ArrayList<>());
+        undoStack.push(() -> {
+            gradesByStudent.remove(name);
+            activityLog.add("Undo: removed student " + name);
+        });
         activityLog.add("Student " + name + " has been added");
-        ArrayList<Integer> students = new ArrayList<>();
         return true;
     }
 
