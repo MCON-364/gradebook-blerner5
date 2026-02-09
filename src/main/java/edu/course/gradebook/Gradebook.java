@@ -16,27 +16,19 @@ public class Gradebook {
     }
 
     public boolean addStudent(String name) {
-        /**if (gradesByStudent.containsKey(name)) {
-         activityLog.add("We already have this student in our existing records");
-         return false;
-         }
-         gradesByStudent.put(name, new ArrayList<>());
-         undoStack.push(() -> {
-         gradesByStudent.remove(name);
-         activityLog.add("Undo: removed student " + name);
-         });
-         activityLog.add("Student " + name + " has been added");
-         return true;
-         }
-         */
         if (gradesByStudent.containsKey(name)) {
             activityLog.add("We already have this student in our existing records");
             return false;
         }
         gradesByStudent.put(name, new ArrayList<>());
+        undoStack.push(() -> {
+            gradesByStudent.remove(name);
+            activityLog.add("Undo: removed student " + name);
+        });
         activityLog.add("Student " + name + " has been added");
         return true;
     }
+
 
     public boolean addGrade(String name, int grade) {
         if (!gradesByStudent.containsKey(name)) {
@@ -59,12 +51,9 @@ public class Gradebook {
             return false;
         }
         List<Integer> removedGrades = new ArrayList<>(gradesByStudent.get(name));
-        boolean studentWasRemoved = gradesByStudent.containsKey(name);
         undoStack.push(() -> {
-            if (studentWasRemoved && !gradesByStudent.containsKey(name)) {
-                gradesByStudent.put(name, new ArrayList<>(removedGrades));
-                activityLog.add("Undo: restored student " + name);
-            }
+            gradesByStudent.put(name, new ArrayList<>(removedGrades));
+            activityLog.add("Undo: restored student " + name);
         });
         gradesByStudent.remove(name);
         activityLog.add("Student " + name + " has been removed from our existing records");
