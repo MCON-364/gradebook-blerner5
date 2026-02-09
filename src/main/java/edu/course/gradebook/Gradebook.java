@@ -16,15 +16,24 @@ public class Gradebook {
     }
 
     public boolean addStudent(String name) {
+        /**if (gradesByStudent.containsKey(name)) {
+         activityLog.add("We already have this student in our existing records");
+         return false;
+         }
+         gradesByStudent.put(name, new ArrayList<>());
+         undoStack.push(() -> {
+         gradesByStudent.remove(name);
+         activityLog.add("Undo: removed student " + name);
+         });
+         activityLog.add("Student " + name + " has been added");
+         return true;
+         }
+         */
         if (gradesByStudent.containsKey(name)) {
             activityLog.add("We already have this student in our existing records");
             return false;
         }
         gradesByStudent.put(name, new ArrayList<>());
-        undoStack.push(() -> {
-            gradesByStudent.remove(name);
-            activityLog.add("Undo: removed student " + name);
-        });
         activityLog.add("Student " + name + " has been added");
         return true;
     }
