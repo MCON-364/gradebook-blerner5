@@ -59,8 +59,9 @@ public class Gradebook {
             return false;
         }
         List<Integer> removedGrades = new ArrayList<>(gradesByStudent.get(name));
+        boolean studentWasRemoved = gradesByStudent.containsKey(name);
         undoStack.push(() -> {
-            if (!gradesByStudent.containsKey(name)) {
+            if (studentWasRemoved && !gradesByStudent.containsKey(name)) {
                 gradesByStudent.put(name, new ArrayList<>(removedGrades));
                 activityLog.add("Undo: restored student " + name);
             }
