@@ -48,9 +48,9 @@ public class Gradebook {
             activityLog.add("Student not found in our existing records");
             return false;
         }
-        List<Integer> oldGrades = new ArrayList<>(gradesByStudent.get(name));
+        List<Integer> removedGrades = new ArrayList<>(gradesByStudent.get(name));
         undoStack.push(() -> {
-            gradesByStudent.put(name, new ArrayList<>(oldGrades));
+            gradesByStudent.put(name, new ArrayList<>(removedGrades));
             activityLog.add("Undo: restored student " + name);
         });
         gradesByStudent.remove(name);
